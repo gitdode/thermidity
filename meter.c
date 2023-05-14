@@ -20,6 +20,9 @@
 static uint32_t mVAvgTmp = -1;
 static uint32_t mvAvgRh = -1;
 
+static int16_t prevTmpx10;
+static int16_t prevRh;
+
 /*
  * Converts the voltage at the given pin with 16x oversampling during
  * idle sleep mode to reduce digital noise, updates the given exponential
@@ -63,18 +66,17 @@ static char * formatTmp(int16_t tmpx10) {
 }
 
 /**
- * Formats the given relative humidity value multiplied by 10 and returns it.
- * @param rhx10
+ * Formats the given relative humidity value and returns it.
+ * @param rh
  * @return string
  */
-static char * formatRh(int32_t rhx10) {
-    if (rhx10 > 994) {
+static char * formatRh(int16_t rh) {
+    if (rh > 99) {
         return "+99%";
     }
     
-    int32_t rh = divRoundNearest(rhx10, 10);
     static char buf[6];
-    snprintf(buf, sizeof (buf), "%3ld%%", rh);
+    snprintf(buf, sizeof (buf), "%3d%%", rh);
     
     return buf;
 }
@@ -93,9 +95,18 @@ void displayValues(void) {
     // temperature in °C multiplied by 10
     int16_t tmpx10 = (mVAvgTmp >> EWMA_BS) - TMP36_MV_0C;
     // relative humidity in % multiplied by 10
-    int32_t rhx10 = (mvAvgRh * 100 - (75750UL << EWMA_BS)) / (318UL << EWMA_BS);
+    int16_t rhx10 = (mvAvgRh * 100 - (75750UL << EWMA_BS)) / (318UL << EWMA_BS);
     // temperature compensation of relative humidity
-    rhx10 = (rhx10 * 1000000) / (1054600 - tmpx10 * 216UL);
+    rhx10 = ((int32_t)rhx10 * 1000000) / (1054600 - tmpx10 * 216UL);
+    int16_t rh = divRoundNearest(rhx10, 10);
+    
+    if (tmpx10 == prevTmpx10 && rh == prevRh) {
+        // skip update of display if no change in measurements
+        return;
+    }
+    
+    prevTmpx10 = tmpx10;
+    prevRh = rh;
     
     Font unifont = getUnifont();
     Font dejavu = getDejaVu();
@@ -103,7 +114,7 @@ void displayValues(void) {
     setFrame(0x00);
     writeString(0, 0, dejavu, formatTmp(tmpx10));
     writeString(4, 152, unifont, "Temperature");
-    writeString(8, 0, dejavu, formatRh(rhx10));
+    writeString(8, 0, dejavu, formatRh(rh));
     writeString(12, 152, unifont, "Humidity");
     doDisplay();
 }

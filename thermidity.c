@@ -132,7 +132,7 @@ int main(void) {
             // display should not be updated more frequently than once every 180 seconds
             if (ints >= (INTS_SEC * 180)) {
                 ints = 0;
-                displayValues();                
+                displayValues();            
             }
         }
     }

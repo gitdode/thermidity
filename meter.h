@@ -14,7 +14,7 @@
 #define TMP36_MV_0C 500
 
 /** Weight of the exponential weighted moving average as bit shift */
-#define EWMA_BS     2
+#define EWMA_BS     3
 
 /**
  * Measures temperature and relative humidity and updates 

@@ -9,7 +9,7 @@
 #define FONT_H
 
 /**
- * A glyph with its pseudo UTF-8 code point, width, height and bitmap.
+ * A glyph with its pseudo UTF-8 code point, width and bitmap.
  */
 typedef struct {
     /** Pseudo UTF-8 code point of the glyph. */
