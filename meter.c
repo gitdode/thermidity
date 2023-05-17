@@ -13,6 +13,7 @@
 #include "font.h"
 #include "unifont.h"
 #include "dejavu.h"
+#include "bitmaps.h"
 #include "display.h"
 #include "usart.h"
 #include "utils.h"
@@ -23,6 +24,7 @@ static uint32_t mvAvgBat = -1;
 
 static int16_t prevTmpx10;
 static int16_t prevRh;
+static int8_t  prevVBatx10;
 
 /*
  * Converts the voltage at the given pin with 16x oversampling during
@@ -83,6 +85,19 @@ static char * formatRh(int16_t rh) {
 }
 
 /**
+ * Returns the bitmap index for the given battery voltage in V multiplied by 10.
+ * @param vBatx10
+ * @return index
+ */
+static uint8_t bitmapBat(int8_t vBatx10) {
+    if (vBatx10 < 33) return BAT_0PCT;
+    if (vBatx10 < 36) return BAT_25PCT;
+    if (vBatx10 < 39) return BAT_50PCT;
+    if (vBatx10 < 42) return BAT_75PCT;
+    return BAT_100PCT;
+}
+
+/**
  * Formats the given battery voltage in mV and returns it.
  * @param mVBat
  * @return string
@@ -117,21 +132,24 @@ void displayValues(void) {
     int16_t rh = divRoundNearest(rhx10, 10);
     // battery voltage in mV (half by voltage divider)
     int16_t mVBat = (mvAvgBat >> (EWMA_BS - 1));
+    int8_t vBatx10 = divRoundNearest(mVBat, 100);
     
-    if (tmpx10 == prevTmpx10 && rh == prevRh && mVBat > BAT_LOW) {
-        // skip update of display if no change in measurements/battery not low
+    if (tmpx10 == prevTmpx10 && rh == prevRh && vBatx10 == prevVBatx10) {
+        // skip update of display if no change in measurements
         return;
     }
     
     prevTmpx10 = tmpx10;
     prevRh = rh;
+    prevVBatx10 = vBatx10;
     
     Font unifont = getUnifont();
     Font dejavu = getDejaVu();
     
     setFrame(0x00);
     writeString(0, 0, dejavu, formatTmp(tmpx10));
-    writeString(0, 216, unifont, formatBat(mVBat));
+    writeString(0, 182, unifont, formatBat(mVBat));
+    writeBitmap(0, 216, bitmapBat(vBatx10));
     writeString(4, 152, unifont, "Temperature");
     writeString(8, 0, dejavu, formatRh(rh));
     writeString(12, 152, unifont, "Humidity");

@@ -10,8 +10,11 @@
 
 #include <stdint.h>
 
-#define TUX 0
-#define LINUS 1
+#define BAT_0PCT    0
+#define BAT_25PCT   1
+#define BAT_50PCT   2
+#define BAT_75PCT   3
+#define BAT_100PCT  4
 
 /**
  * A bitmap with its width and height, and data.
