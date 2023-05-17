@@ -8,13 +8,15 @@
 #ifndef METER_H
 #define METER_H
 
-#define AREF_MV     5000
+#define AREF_MV     3000
+
+#define BAT_LOW     3300
 
 /** Output of the TMP36 is 750 mV @ 25°C, 10 mV per °C */
 #define TMP36_MV_0C 500
 
 /** Weight of the exponential weighted moving average as bit shift */
-#define EWMA_BS     3
+#define EWMA_BS     4
 
 /**
  * Measures temperature and relative humidity and updates 

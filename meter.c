@@ -19,6 +19,7 @@
 
 static uint32_t mVAvgTmp = -1;
 static uint32_t mvAvgRh = -1;
+static uint32_t mvAvgBat = -1;
 
 static int16_t prevTmpx10;
 static int16_t prevRh;
@@ -81,9 +82,24 @@ static char * formatRh(int16_t rh) {
     return buf;
 }
 
+/**
+ * Formats the given battery voltage in mV and returns it.
+ * @param mVBat
+ * @return string
+ */
+static char * formatBat(int16_t mVBat) {
+    uint8_t vx10 = divRoundNearest(mVBat, 100);
+    div_t v = div(vx10, 10);
+    static char buf[7];
+    snprintf(buf, sizeof (buf), "%d.%dV", v.quot, v.rem);
+    
+    return buf;
+}
+
 void measureValues(void) {
     mVAvgTmp = convert(PIN_TMP, mVAvgTmp);
-    mvAvgRh = convert(PIN_RH, mvAvgRh);    
+    mvAvgRh = convert(PIN_RH, mvAvgRh);
+    mvAvgBat = convert(PIN_BAT, mvAvgBat);
 }
 
 void displayValues(void) {
@@ -94,14 +110,16 @@ void displayValues(void) {
 
     // temperature in °C multiplied by 10
     int16_t tmpx10 = (mVAvgTmp >> EWMA_BS) - TMP36_MV_0C;
-    // relative humidity in % multiplied by 10
-    int16_t rhx10 = (mvAvgRh * 100 - (75750UL << EWMA_BS)) / (318UL << EWMA_BS);
+    // relative humidity in % multiplied by 10 at 3V Vdc
+    int16_t rhx10 = (mvAvgRh * 100 - (45450UL << EWMA_BS)) / (191UL << EWMA_BS);
     // temperature compensation of relative humidity
     rhx10 = ((int32_t)rhx10 * 1000000) / (1054600 - tmpx10 * 216UL);
     int16_t rh = divRoundNearest(rhx10, 10);
+    // battery voltage in mV (half by voltage divider)
+    int16_t mVBat = (mvAvgBat >> (EWMA_BS - 1));
     
-    if (tmpx10 == prevTmpx10 && rh == prevRh) {
-        // skip update of display if no change in measurements
+    if (tmpx10 == prevTmpx10 && rh == prevRh && mVBat > BAT_LOW) {
+        // skip update of display if no change in measurements/battery not low
         return;
     }
     
@@ -113,6 +131,7 @@ void displayValues(void) {
     
     setFrame(0x00);
     writeString(0, 0, dejavu, formatTmp(tmpx10));
+    writeString(0, 216, unifont, formatBat(mVBat));
     writeString(4, 152, unifont, "Temperature");
     writeString(8, 0, dejavu, formatRh(rh));
     writeString(12, 152, unifont, "Humidity");

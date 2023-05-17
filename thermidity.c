@@ -100,8 +100,6 @@ static void initTimer(void) {
 static void initADC(void) {
     set_sleep_mode(SLEEP_MODE_IDLE);
 
-    // use AVCC as reference voltage
-    ADMUX |= (1 << REFS0);
     // disable digital input on the ADC inputs to reduce digital noise
     DIDR0 = 0b00111111;
     // ADC clock prescaler/64 ~ 125 kHz @ 8 MHz
@@ -122,7 +120,7 @@ int main(void) {
 
     // enable global interrupts
     sei();
-
+    
     while (true) {
         
         // measure and average temperature and relative humidity every 10 seconds

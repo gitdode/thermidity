@@ -12,6 +12,7 @@
 
 #define PIN_TMP   PC0
 #define PIN_RH    PC1
+#define PIN_BAT   PC2
 
 /* SPI pins */
 #define DDR_SPI   DDRB
