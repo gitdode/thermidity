@@ -84,6 +84,8 @@ static void initSPI(void) {
  * Sets up the timer.
  */
 static void initTimer(void) {
+    // clock async'ly by external 32.768kHz watch crystal
+    ASSR |= (1 << AS2);
     // timer2 clear timer on compare match mode, TOP OCR2A
     TCCR2A |= (1 << WGM21);
     // timer2 clock prescaler/1024/255 ~ 31 Hz @ 8 Mhz
@@ -140,7 +142,11 @@ int main(void) {
                 displayValues();
             }
         }
-
+        
+        // ensure that one TOSC1 cycle has elapsed before re-entering sleep mode
+        OCR2A = 32;
+        loop_until_bit_is_clear(ASSR, OCR2AUB);
+        
         set_sleep_mode(SLEEP_MODE_PWR_SAVE);
         sleep_mode();
     }
