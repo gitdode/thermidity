@@ -19,6 +19,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
+#include <avr/wdt.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 
@@ -31,13 +32,15 @@
 #include "utils.h"
 #include "usart.h"
 
-/* Timer0 interrupts per second */
-#define INTS_SEC    F_CPU / (64UL * 255)
+#define SECS_PER_BARK   8
+#define MEASURE_BARKS   2 // 16 seconds
+// display should not be updated more frequently than once every 180 seconds
+#define DISP_UPD_BARKS  24 // 192 seconds
 
-static volatile uint32_t ints = INTS_SEC * 175;
+static volatile uint16_t barks = DISP_UPD_BARKS;
 
-ISR(TIMER0_COMPA_vect) {
-    ints++;
+ISR(WDT_vect) {
+    barks++;
 }
 
 EMPTY_INTERRUPT(ADC_vect);
@@ -81,25 +84,21 @@ static void initSPI(void) {
 }
 
 /**
- * Sets up the timer.
+ * Sets up the watchdog.
  */
-static void initTimer(void) {
-    // timer0 clear timer on compare match mode, TOP OCR0A
-    TCCR0A |= (1 << WGM01);
-    // timer0 clock prescaler/64/255 ~ 61 Hz @ 1 MHz ~ 490 Hz @ 8 Mhz
-    TCCR0B |= (1 << CS01) | (1 << CS00);
-    OCR0A = 255;
-
-    // enable timer0 compare match A interrupt
-    TIMSK0 |= (1 << OCIE0A);
+static void initWatchdog(void) {
+    cli();
+    wdt_reset();
+    // watchdog change enable
+    WDTCSR |= (1 << WDCE) | (1 << WDE);
+    // disable system reset, enable interrupt, bark every 8 seconds
+    WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP3) | (1 << WDP0);
 }
 
 /**
  * Sets up the ADC.
  */
 static void initADC(void) {
-    set_sleep_mode(SLEEP_MODE_IDLE);
-
     // disable digital input on the ADC inputs to reduce digital noise
     DIDR0 = 0b00111111;
     // ADC clock prescaler/64 ~ 125 kHz @ 8 MHz
@@ -111,10 +110,10 @@ static void initADC(void) {
 }
 
 int main(void) {
-
+    
     initPins();
     initSPI();
-    initTimer();
+    initWatchdog();
     initADC();
     initUSART();
 
@@ -122,17 +121,20 @@ int main(void) {
     sei();
     
     while (true) {
-        
-        // measure and average temperature and relative humidity every 10 seconds
-        if (ints % (INTS_SEC * 10) == 0) {
+        // measure and average temperature and relative humidity
+        if (barks % MEASURE_BARKS == 0) {
             measureValues();
 
-            // display should not be updated more frequently than once every 180 seconds
-            if (ints >= (INTS_SEC * 180)) {
-                ints = 0;
-                displayValues();            
+            // update display
+            if (barks >= DISP_UPD_BARKS) {
+                displayValues();
+                barks = 0;
             }
         }
+        
+        wdt_reset();
+        set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+        sleep_mode();
     }
 
     return 0;
