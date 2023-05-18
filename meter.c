@@ -33,7 +33,7 @@ static int8_t  prevVBatx10;
  */
 static uint32_t convert(uint8_t pin, uint32_t mVAvg) {
     ADMUX = (0xf0 & ADMUX) | pin;
-    set_sleep_mode(SLEEP_MODE_IDLE);
+    set_sleep_mode(SLEEP_MODE_ADC);
 
     uint32_t overValue = 0;
     for (uint8_t i = 0; i < 16; i++) {
