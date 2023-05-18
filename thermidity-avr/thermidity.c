@@ -137,10 +137,10 @@ int main(void) {
             // display should not be updated more frequently than once every 180 seconds
             if (ints >= (INTS_SEC * 192)) {
                 ints = 0;
-                displayValues();            
-            }            
+                displayValues();
+            }
         }
-        
+
         set_sleep_mode(SLEEP_MODE_PWR_SAVE);
         sleep_mode();
     }
