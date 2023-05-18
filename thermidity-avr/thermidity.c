@@ -19,7 +19,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
-#include <avr/wdt.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 
@@ -32,16 +31,13 @@
 #include "utils.h"
 #include "usart.h"
 
-#define SECS_PER_BARK   8
-/* Should be by power of two to make modulo not expensive (hopefully) */
-#define MEASURE_BARKS   2 // 16 seconds
-/* Display should not be updated more frequently than once every 180 seconds */
-#define DISP_UPD_BARKS  24 // 192 seconds
+/* Timer2 interrupts per second */
+#define INTS_SEC    F_CPU / (1024UL * 255)
 
-static volatile uint16_t barks = DISP_UPD_BARKS;
+static volatile uint32_t ints = INTS_SEC * 191;
 
-ISR(WDT_vect) {
-    barks++;
+ISR(TIMER2_COMPA_vect) {
+    ints++;
 }
 
 EMPTY_INTERRUPT(ADC_vect);
@@ -85,15 +81,17 @@ static void initSPI(void) {
 }
 
 /**
- * Sets up the watchdog.
+ * Sets up the timer.
  */
-static void initWatchdog(void) {
-    cli();
-    wdt_reset();
-    // watchdog change enable
-    WDTCSR |= (1 << WDCE) | (1 << WDE);
-    // enable interrupt, disable system reset, bark every 8 seconds
-    WDTCSR = (1 << WDIE) | (0 << WDE) | (1 << WDP3) | (1 << WDP0);
+static void initTimer(void) {
+    // timer2 clear timer on compare match mode, TOP OCR2A
+    TCCR2A |= (1 << WGM21);
+    // timer2 clock prescaler/1024/255 ~ 31 Hz @ 8 Mhz
+    TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
+    OCR2A = 255;
+
+    // enable timer2 compare match A interrupt
+    TIMSK2 |= (1 << OCIE2A);
 }
 
 /**
@@ -123,28 +121,26 @@ int main(void) {
     reducePower();
     initPins();
     initSPI();
-    initWatchdog();
+    initTimer();
     initADC();
     // initUSART();
 
     // enable global interrupts
     sei();
 
-    // allow to settle a bit
-    _delay_ms(1000);
-
     while (true) {
-        // measure and average temperature and relative humidity
-        if (barks % MEASURE_BARKS == 0) {
+
+        // measure and average temperature and relative humidity every 16 seconds
+        if (ints % (INTS_SEC * 16) == 0) {
             measureValues();
 
-            // update display
-            if (barks >= DISP_UPD_BARKS) {
-                barks = 0;
-                displayValues();
-            }
+            // display should not be updated more frequently than once every 180 seconds
+            if (ints >= (INTS_SEC * 192)) {
+                ints = 0;
+                displayValues();            
+            }            
         }
-
+        
         set_sleep_mode(SLEEP_MODE_PWR_SAVE);
         sleep_mode();
     }
