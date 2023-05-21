@@ -2,9 +2,11 @@ name: make
 
 on:
   push:
-    branches: [ main ]
+    branches: main
+    paths: 'thermidity-avr/**'
   pull_request:
-    branches: [ main ]
+    branches: main
+    paths: 'thermidity-avr/**'
 
 jobs:
   build:
