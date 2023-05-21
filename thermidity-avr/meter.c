@@ -63,7 +63,7 @@ static char * formatTmp(int16_t tmpx10) {
     }
     
     div_t tmp = div(tmpx10, 10);
-    static char buf[9];
+    static char buf[15];
     snprintf(buf, sizeof (buf), "%3d.%d°", tmp.quot, abs(tmp.rem));
     
     return buf;
@@ -79,7 +79,7 @@ static char * formatRh(int16_t rh) {
         return "+99%";
     }
     
-    static char buf[6];
+    static char buf[8];
     snprintf(buf, sizeof (buf), "%3d%%", rh);
     
     return buf;
