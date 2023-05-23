@@ -31,10 +31,16 @@
 #include "utils.h"
 #include "usart.h"
 
-/* Timer2 interrupts per second */
-#define INTS_SEC    F_CPU / (1024UL * 255)
+#define TIMER_COMPARE   255
+/* Measure and average temperature and relative humidity every 16 seconds */
+#define MEASURE_SECS    16
+/* Display should not be updated more frequently than once every 180 seconds */
+#define DISP_UPD_SECS   192
 
-static volatile uint32_t ints = INTS_SEC * 191;
+/* Timer2 interrupts per second */
+#define INTS_SEC        F_CPU / (1024UL * TIMER_COMPARE)
+
+static volatile uint32_t ints = INTS_SEC * (DISP_UPD_SECS - 1);
 
 ISR(TIMER2_COMPA_vect) {
     ints++;
@@ -90,7 +96,7 @@ static void initTimer(void) {
     TCCR2A |= (1 << WGM21);
     // timer2 clock prescaler/1024/255 ~ 31 Hz @ 8 Mhz
     TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);
-    OCR2A = 255;
+    OCR2A = TIMER_COMPARE;
 
     // enable timer2 compare match A interrupt
     TIMSK2 |= (1 << OCIE2A);
@@ -132,19 +138,18 @@ int main(void) {
 
     while (true) {
 
-        // measure and average temperature and relative humidity every 16 seconds
-        if (ints % (INTS_SEC * 16) == 0) {
+        // modulo probably not efficient?
+        if (ints % (INTS_SEC * MEASURE_SECS) == 0) {
             measureValues();
 
-            // display should not be updated more frequently than once every 180 seconds
-            if (ints >= (INTS_SEC * 192)) {
+            if (ints >= (INTS_SEC * DISP_UPD_SECS)) {
                 ints = 0;
                 displayValues();
             }
         }
         
         // ensure that one TOSC1 cycle has elapsed before re-entering sleep mode
-        OCR2A = 32;
+        OCR2A = TIMER_COMPARE;
         loop_until_bit_is_clear(ASSR, OCR2AUB);
         
         set_sleep_mode(SLEEP_MODE_PWR_SAVE);
