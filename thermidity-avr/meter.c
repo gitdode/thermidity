@@ -79,7 +79,7 @@ static char * formatRh(int16_t rh) {
         return "+99%";
     }
     
-    static char buf[9];
+    static char buf[8];
     snprintf(buf, sizeof (buf), "%3d%%", rh);
     
     return buf;
