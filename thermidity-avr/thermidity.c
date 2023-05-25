@@ -31,7 +31,7 @@
 #include "utils.h"
 #include "usart.h"
 
-/* 32.768 kHz / 1024 / 32 = 1 Hz */
+/* 32.768kHz / 1024 / 32 = 1Hz */
 #define TIMER_COMPARE   32
 /* Measure and average temperature and relative humidity every 16 seconds */
 #define MEASURE_SECS    16
@@ -88,7 +88,7 @@ static void initSPI(void) {
  * Sets up the timer.
  */
 static void initTimer(void) {
-    // clock async'ly by external 32.768 kHz watch crystal
+    // clock async'ly by external 32.768kHz watch crystal
     ASSR |= (1 << AS2);
     // timer2 clear timer on compare match mode, TOP OCR2A
     TCCR2A |= (1 << WGM21);
@@ -106,7 +106,7 @@ static void initTimer(void) {
 static void initADC(void) {
     // disable digital input on the ADC inputs to reduce digital noise
     DIDR0 = 0b00111111;
-    // ADC clock prescaler/64 ~ 125 kHz @ 8 MHz
+    // ADC clock prescaler/64 ~ 125kHz @ 8MHz
     ADCSRA |= (1 << ADPS2) | (1 << ADPS1);
     // enable ADC interrupt
     ADCSRA |= (1 << ADIE);
@@ -146,7 +146,7 @@ int main(void) {
     // enable global interrupts
     sei();
     
-    // allow to settle a bit (32.768 kHz oscillator to stabilize)
+    // allow to settle a bit (32.768kHz oscillator to stabilize)
     _delay_ms(1500);
 
     while (true) {
