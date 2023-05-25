@@ -31,16 +31,14 @@
 #include "utils.h"
 #include "usart.h"
 
-#define TIMER_COMPARE   255
+/* 32.768 kHz / 1024 / 32 = 1 Hz */
+#define TIMER_COMPARE   32
 /* Measure and average temperature and relative humidity every 16 seconds */
 #define MEASURE_SECS    16
 /* Display should not be updated more frequently than once every 180 seconds */
 #define DISP_UPD_SECS   192
 
-/* Timer2 interrupts per second */
-#define INTS_SEC        F_CPU / (1024UL * TIMER_COMPARE)
-
-static volatile uint32_t ints = INTS_SEC * (DISP_UPD_SECS - 1);
+static volatile uint32_t ints = DISP_UPD_SECS;
 
 ISR(TIMER2_COMPA_vect) {
     ints++;
@@ -94,7 +92,7 @@ static void initTimer(void) {
     ASSR |= (1 << AS2);
     // timer2 clear timer on compare match mode, TOP OCR2A
     TCCR2A |= (1 << WGM21);
-    // timer2 clock prescaler/1024/255 ~ 31 Hz @ 8 Mhz
+    // timer2 clock divided by 1024
     TCCR2B |= (1 << CS22) | (1 << CS21) | (1 << CS20);
     OCR2A = TIMER_COMPARE;
 
@@ -135,14 +133,15 @@ int main(void) {
 
     // enable global interrupts
     sei();
+    
+    // allow to settle a bit
+    _delay_ms(1000);
 
     while (true) {
-
-        // modulo probably not efficient?
-        if (ints % (INTS_SEC * MEASURE_SECS) == 0) {
+        if (ints % MEASURE_SECS == 0) {
             measureValues();
 
-            if (ints >= (INTS_SEC * DISP_UPD_SECS)) {
+            if (ints >= DISP_UPD_SECS) {
                 ints = 0;
                 displayValues();
             }
