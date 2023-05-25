@@ -38,10 +38,10 @@
 /* Display should not be updated more frequently than once every 180 seconds */
 #define DISP_UPD_SECS   192
 
-static volatile uint32_t ints = DISP_UPD_SECS;
+static volatile uint16_t secs = DISP_UPD_SECS;
 
 ISR(TIMER2_COMPA_vect) {
-    ints++;
+    secs++;
 }
 
 EMPTY_INTERRUPT(ADC_vect);
@@ -88,7 +88,7 @@ static void initSPI(void) {
  * Sets up the timer.
  */
 static void initTimer(void) {
-    // clock async'ly by external 32.768kHz watch crystal
+    // clock async'ly by external 32.768 kHz watch crystal
     ASSR |= (1 << AS2);
     // timer2 clear timer on compare match mode, TOP OCR2A
     TCCR2A |= (1 << WGM21);
@@ -110,8 +110,20 @@ static void initADC(void) {
     ADCSRA |= (1 << ADPS2) | (1 << ADPS1);
     // enable ADC interrupt
     ADCSRA |= (1 << ADIE);
-    // enable ADC
+}
+
+/**
+ * Enables the ADC.
+ */
+static void enableADC(void) {
     ADCSRA |= (1 << ADEN);
+}
+
+/**
+ * Disables the ADC.
+ */
+static void disableADC(void) {
+    ADCSRA &= ~(1 << ADEN);
 }
 
 /**
@@ -134,15 +146,21 @@ int main(void) {
     // enable global interrupts
     sei();
     
-    // allow to settle a bit
-    _delay_ms(1000);
+    // allow to settle a bit (32.768 kHz oscillator to stabilize)
+    _delay_ms(1500);
 
     while (true) {
-        if (ints % MEASURE_SECS == 0) {
+        if (secs % MEASURE_SECS == 0) {
+            enableADC();
+            // give the ADC some time after "asynchronous" sleep mode, 
+            // otherwise the first measurement will be quite off.  
+            _delay_ms(1);
             measureValues();
+            // disable ADC before entering sleep mode to save power
+            disableADC();
 
-            if (ints >= DISP_UPD_SECS) {
-                ints = 0;
+            if (secs >= DISP_UPD_SECS) {
+                secs = 0;
                 displayValues();
             }
         }
