@@ -144,9 +144,6 @@ int main(void) {
     while (true) {
         if (secs % MEASURE_SECS == 0) {
             enableADC();
-            // give the ADC some time after sleep mode, 
-            // otherwise the first measurement will be quite off.  
-            _delay_ms(1);
             measureValues();
             // disable ADC before entering sleep mode to save power
             disableADC();

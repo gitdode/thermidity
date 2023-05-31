@@ -33,9 +33,7 @@ static void bufferByte(uint16_t index, uint16_t *address, uint16_t height,
         *address += 8 * DISPLAY_H_BYTES + 1;
     }
 
-    if (!(*address < 0 || *address > DISPLAY_WIDTH * DISPLAY_H_BYTES)) {
-        sramWrite(*address, byte);
-    }
+    sramWrite(*address, byte);
     *address -= DISPLAY_H_BYTES;
 }
 
@@ -58,7 +56,6 @@ static void bufferBitmap(uint8_t row, uint16_t col, const uint8_t *bitmap,
     uint8_t rotated[8];
     memset(rotated, 0, 8);
     uint16_t n = 0, w = 0;
-    uint16_t address = origin;
     for (uint16_t i = 0; i < size; i++) {
         uint8_t next = pgm_read_byte(&bitmap[n]);
         // read bytes column by column
@@ -77,7 +74,7 @@ static void bufferBitmap(uint8_t row, uint16_t col, const uint8_t *bitmap,
         // buffer 8 x 8 rotated pixel
         if ((i + 1) % 8 == 0) {
             for (uint8_t r = 0; r < 8; r++) {
-                bufferByte(w, &address, height, rotated[r]);
+                bufferByte(w, &origin, height, rotated[r]);
                 w++;
             }
             memset(rotated, 0, 8);

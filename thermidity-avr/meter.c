@@ -119,11 +119,6 @@ void measureValues(void) {
 }
 
 void displayValues(void) {
-    if (mVAvgTmp == -1 || mvAvgRh == -1) {
-        // do nothing if not yet measured
-        return;
-    }
-
     // temperature in °C multiplied by 10
     int16_t tmpx10 = (mVAvgTmp >> EWMA_BS) - TMP36_MV_0C;
     // relative humidity in % multiplied by 10 at 3V Vdc
