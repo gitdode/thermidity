@@ -40,4 +40,3 @@
 #define PIN_BUSY  PD5 // display busy
 
 #endif /* PINS_H */
-
