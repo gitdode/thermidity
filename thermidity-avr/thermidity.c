@@ -19,6 +19,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
+#include <avr/wdt.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 
@@ -83,7 +84,7 @@ static void initSPI(void) {
 }
 
 /**
- * Sets up the timer.
+ * Sets up the watchdog.
  */
 static void initWatchdog(void) {
     cli();
@@ -143,7 +144,7 @@ int main(void) {
     while (true) {
         if (secs % MEASURE_SECS == 0) {
             enableADC();
-            // give the ADC some time after "asynchronous" sleep mode, 
+            // give the ADC some time after sleep mode, 
             // otherwise the first measurement will be quite off.  
             _delay_ms(1);
             measureValues();
