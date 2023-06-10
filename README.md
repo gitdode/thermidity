@@ -45,7 +45,7 @@ The consumption of each component is about:
 
 | Component  | Data Sheet | Measured |
 |------------|-----------:|---------:|
-| ATmega328P |     ¹4.2µA |    <20µA |
+| ATmega328P |     ¹4.2µA |    <17µA |
 | Thermistor |        N/A |     24µA |
 | HIH-5030   |     ²200µA |    211µA |
 | V-Divider  |        N/A |      2µA |
@@ -59,7 +59,7 @@ The consumption of each component is about:
 Between taking measurements, the MCU is set to power-down sleep mode with the
 watchdog used as wake-up source. Additionally, the thermistor and humidity 
 sensor are powered off. Between display updates, the display is set to deep 
-sleep mode. Power consumption (measured) then is about 20µA at 3.8V for MCU 
+sleep mode. Power consumption (measured) then is about 19µA at 3.8V for MCU 
 and display including SRAM. 
 
 When measuring temperature, humidity and battery voltage in ADC noise reduction 
