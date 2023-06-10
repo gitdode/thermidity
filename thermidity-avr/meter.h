@@ -8,8 +8,12 @@
 #ifndef METER_H
 #define METER_H
 
-// used temporarily for TMP36 - will be replaced by a thermistor
-#define AREF_MV     3800
+/** Use AVCC as reference voltage */
+#define AREF_AVCC   (1 << REFS0)
+/** Use internal 1.1V reference voltage */
+#define AREF_INT    (1 << REFS1) | (1 << REFS0)
+
+#define AREF_MV     1100 // 1136
 
 #define BAT_LOW     3300
 

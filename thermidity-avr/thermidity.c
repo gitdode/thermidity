@@ -50,10 +50,10 @@ EMPTY_INTERRUPT(ADC_vect);
  * Sets up the pins.
  */
 static void initPins(void) {
-    // set voltage reference pin as output pin
-    DDR_SENS |= (1 << PIN_REF);
-    // drive voltage reference pin low
-    PORT_SENS &= ~(1 << PIN_REF);
+    // set sensor power pin as output pin
+    DDR_SENS |= (1 << PIN_PWR);
+    // drive sensor power pin low
+    PORT_SENS &= ~(1 << PIN_PWR);
     
     // set MOSI and SCK as output pin
     DDR_SPI |= (1 << PIN_MOSI);
@@ -105,8 +105,6 @@ static void initWatchdog(void) {
  * Sets up the ADC.
  */
 static void initADC(void) {
-    // use AVCC as reference voltage
-    ADMUX |= (1 << REFS0);
     // disable digital input on the ADC inputs to reduce digital noise
     DIDR0 = 0b00111111;
     // ADC clock prescaler/64 ~ 125kHz @ 8MHz
@@ -119,14 +117,14 @@ static void initADC(void) {
  * Powers on the sensors.
  */
 static void powerOnSensors(void) {
-    PORT_SENS |= (1 << PIN_REF);
+    PORT_SENS |= (1 << PIN_PWR);
 }
 
 /**
  * Powers off the sensors.
  */
 static void powerOffSensors(void) {
-    PORT_SENS &= ~(1 << PIN_REF);
+    PORT_SENS &= ~(1 << PIN_PWR);
 }
 
 /**

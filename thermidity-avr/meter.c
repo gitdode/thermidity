@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/sleep.h>
+
 #include "meter.h"
 #include "pins.h"
 #include "font.h"
@@ -27,25 +28,31 @@ static int16_t prevRh;
 static int8_t  prevVBatx10;
 
 /*
- * Converts the voltage at the given pin with 16x oversampling during
- * ADC noise reduction mode to reduce digital noise, updates the given 
- * exponential weighted moving average and returns it either as ratiometric
- * or absolute measurement.
+ * Converts ratiometric or absolute with the given reference voltage at the 
+ * given pin with 16x oversampling during ADC noise reduction mode to reduce 
+ * digital noise, updates the given exponential weighted moving average and 
+ * returns it.
  */
-static uint32_t convert(uint8_t pin, uint32_t avg, bool ratio) {
-    ADMUX = (0xf0 & ADMUX) | pin;
+static uint32_t convert(uint8_t aref, uint8_t pin, bool ratio, uint32_t avg) {
+    ADMUX = 0x00 | aref | pin;
     set_sleep_mode(SLEEP_MODE_ADC);
 
     uint32_t over = 0;
-    for (uint8_t i = 0; i < 16; i++) {
+    for (uint8_t i = 0; i < 17; i++) {
         ADCSRA |= (1 << ADSC);
         sleep_mode();
-        over += ADC;
+        // discard first conversion result after switching reference voltage
+        if (i > 0) over += ADC;
     }
 
-    uint32_t val = (over >> 2);
+    uint32_t val = (over >> 2);    
     if (!ratio) {
-        val = (val * AREF_MV) >> 12;
+        // TODO remove when replacing TMP36 with thermistor
+        if (pin == PIN_TMP) {
+            val = (val * 3800) >> 12;
+        } else {
+            val = (val * AREF_MV) >> 12;
+        }
     }
     
     if (avg == -1) {
@@ -117,9 +124,9 @@ static char * formatBat(int16_t mVBat) {
 }
 
 void measureValues(void) {
-    mVAvgTmp = convert(PIN_TMP, mVAvgTmp, false);
-    ratioAvgRh = convert(PIN_RH, ratioAvgRh, true);
-    mvAvgBat = convert(PIN_BAT, mvAvgBat, false);
+    mVAvgTmp = convert(AREF_AVCC, PIN_TMP, false, mVAvgTmp);
+    ratioAvgRh = convert(AREF_AVCC, PIN_RH, true, ratioAvgRh);
+    mvAvgBat = convert(AREF_INT, PIN_BAT, false, mvAvgBat);
 }
 
 void displayValues(void) {
@@ -133,8 +140,8 @@ void displayValues(void) {
     // temperature compensation of relative humidity
     rh = ((int32_t)rh * 1000000) / (1054600 - tmpx10 * 216UL);
     
-    // battery voltage in mV (half by voltage divider)
-    int16_t mVBat = (mvAvgBat >> (EWMA_BS - 1));
+    // battery voltage in mV (one fifth by voltage divider)
+    int16_t mVBat = (mvAvgBat >> EWMA_BS) * 5;
     int8_t vBatx10 = divRoundNearest(mVBat, 100);
     
     if (tmpx10 == prevTmpx10 && rh == prevRh && vBatx10 == prevVBatx10) {
