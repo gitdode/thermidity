@@ -19,7 +19,7 @@
 #include "utils.h"
 
 static uint32_t mVAvgTmp = -1;
-static uint32_t mvAvgRh = -1;
+static uint32_t ratioAvgRh = -1;
 static uint32_t mvAvgBat = -1;
 
 static int16_t prevTmpx10;
@@ -29,26 +29,30 @@ static int8_t  prevVBatx10;
 /*
  * Converts the voltage at the given pin with 16x oversampling during
  * ADC noise reduction mode to reduce digital noise, updates the given 
- * exponential weighted moving average and returns it.
+ * exponential weighted moving average and returns it either as ratiometric
+ * or absolute measurement.
  */
-static uint32_t convert(uint8_t pin, uint32_t mVAvg) {
+static uint32_t convert(uint8_t pin, uint32_t avg, bool ratio) {
     ADMUX = (0xf0 & ADMUX) | pin;
     set_sleep_mode(SLEEP_MODE_ADC);
 
-    uint32_t overValue = 0;
+    uint32_t over = 0;
     for (uint8_t i = 0; i < 16; i++) {
         ADCSRA |= (1 << ADSC);
         sleep_mode();
-        overValue += ADC;
+        over += ADC;
     }
 
-    uint32_t mV = ((overValue >> 2) * AREF_MV) >> 12;
+    uint32_t val = (over >> 2);
+    if (!ratio) {
+        val = (val * AREF_MV) >> 12;
+    }
     
-    if (mVAvg == -1) {
+    if (avg == -1) {
         // use first measurement as initial value for average
-        return mV << EWMA_BS;
+        return val << EWMA_BS;
     } else {
-        return mV + mVAvg - (mVAvg >> EWMA_BS);
+        return val + avg - (avg >> EWMA_BS);
     }
 }
 
@@ -113,19 +117,22 @@ static char * formatBat(int16_t mVBat) {
 }
 
 void measureValues(void) {
-    mVAvgTmp = convert(PIN_TMP, mVAvgTmp);
-    mvAvgRh = convert(PIN_RH, mvAvgRh);
-    mvAvgBat = convert(PIN_BAT, mvAvgBat);
+    mVAvgTmp = convert(PIN_TMP, mVAvgTmp, false);
+    ratioAvgRh = convert(PIN_RH, ratioAvgRh, true);
+    mvAvgBat = convert(PIN_BAT, mvAvgBat, false);
 }
 
 void displayValues(void) {
     // temperature in °C multiplied by 10
     int16_t tmpx10 = (mVAvgTmp >> EWMA_BS) - TMP36_MV_0C;
-    // relative humidity in % multiplied by 10 at 3V Vdc
-    int16_t rhx10 = (mvAvgRh * 100 - (45450UL << EWMA_BS)) / (191UL << EWMA_BS);
+    
+    // relative humidity in %
+    int32_t rhADC = (ratioAvgRh >> EWMA_BS);
+    int16_t rh = divRoundNearest((rhADC - RH_ADC_0) * 100, RH_ADC);
+    
     // temperature compensation of relative humidity
-    rhx10 = ((int32_t)rhx10 * 1000000) / (1054600 - tmpx10 * 216UL);
-    int16_t rh = divRoundNearest(rhx10, 10);
+    rh = ((int32_t)rh * 1000000) / (1054600 - tmpx10 * 216UL);
+    
     // battery voltage in mV (half by voltage divider)
     int16_t mVBat = (mvAvgBat >> (EWMA_BS - 1));
     int8_t vBatx10 = divRoundNearest(mVBat, 100);

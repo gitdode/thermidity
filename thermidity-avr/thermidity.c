@@ -105,6 +105,8 @@ static void initWatchdog(void) {
  * Sets up the ADC.
  */
 static void initADC(void) {
+    // use AVCC as reference voltage
+    ADMUX |= (1 << REFS0);
     // disable digital input on the ADC inputs to reduce digital noise
     DIDR0 = 0b00111111;
     // ADC clock prescaler/64 ~ 125kHz @ 8MHz
@@ -114,16 +116,16 @@ static void initADC(void) {
 }
 
 /**
- * Powers on the voltage reference including humidity sensor.
+ * Powers on the sensors.
  */
-static void powerOnVref(void) {
+static void powerOnSensors(void) {
     PORT_SENS |= (1 << PIN_REF);
 }
 
 /**
- * Powers off the voltage reference including humidity sensor.
+ * Powers off the sensors.
  */
-static void powerOffVref(void) {
+static void powerOffSensors(void) {
     PORT_SENS &= ~(1 << PIN_REF);
 }
 
@@ -168,7 +170,7 @@ int main(void) {
         }
         
         if (secsCopy % MEASURE_SECS == 0) {
-            powerOnVref();
+            powerOnSensors();
             // give the humidity sensor some time to settle
             _delay_ms(100);
             enableADC();
@@ -176,7 +178,7 @@ int main(void) {
             // disable ADC before entering sleep mode to save power
             disableADC();
             // power off voltage reference incl. humidity sensor
-            powerOffVref();
+            powerOffSensors();
 
             if (secsCopy >= DISP_UPD_SECS) {
                 ATOMIC_BLOCK(ATOMIC_FORCEON) {

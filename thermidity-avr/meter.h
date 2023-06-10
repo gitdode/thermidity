@@ -8,12 +8,18 @@
 #ifndef METER_H
 #define METER_H
 
-#define AREF_MV     3000
+// used temporarily for TMP36 - will be replaced by a thermistor
+#define AREF_MV     3800
 
 #define BAT_LOW     3300
 
 /** Output of the TMP36 is 750 mV @ 25°C, 10 mV per °C */
 #define TMP36_MV_0C 500
+
+/** Ratiometric response of the HIH-5030 at 0%RH and 100%RH with 12-bit ADC */
+#define RH_ADC_0    620  // Vout = Vsupply * 0.1515
+#define RH_ADC_100  3225 // Vout = Vsupply * 0.7875
+#define RH_ADC      RH_ADC_100 - RH_ADC_0
 
 /** Weight of the exponential weighted moving average as bit shift */
 #define EWMA_BS     4
