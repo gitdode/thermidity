@@ -102,9 +102,9 @@ static char * formatRh(int16_t rh) {
  * @return index
  */
 static uint8_t bitmapBat(int8_t vBatx10) {
-    if (vBatx10 < 33) return BAT_0PCT;
-    if (vBatx10 < 36) return BAT_25PCT;
-    if (vBatx10 < 39) return BAT_50PCT;
+    if (vBatx10 < 30) return BAT_0PCT;
+    if (vBatx10 < 34) return BAT_25PCT;
+    if (vBatx10 < 38) return BAT_50PCT;
     if (vBatx10 < 42) return BAT_75PCT;
     return BAT_100PCT;
 }

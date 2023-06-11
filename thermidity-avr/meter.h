@@ -15,7 +15,7 @@
 
 #define AREF_MV     1100 // 1136
 
-#define BAT_LOW     3300
+#define BAT_LOW     3000
 
 /** Output of the TMP36 is 750 mV @ 25°C, 10 mV per °C */
 #define TMP36_MV_0C 500
