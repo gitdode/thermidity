@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
 
@@ -20,8 +21,8 @@
 #include "usart.h"
 #include "utils.h"
 
-static uint32_t mVAvgTmp = -1;
-static uint32_t ratioAvgRh = -1;
+static uint32_t avgADCTmp = -1;
+static uint32_t avgADCRh = -1;
 static uint32_t mvAvgBat = -1;
 
 static int16_t prevTmpx10;
@@ -47,13 +48,8 @@ static uint32_t convert(uint8_t aref, uint8_t pin, bool ratio, uint32_t avg) {
     }
 
     uint32_t val = (over >> 2);    
-    if (!ratio) {
-        // TODO remove when replacing TMP36 with thermistor
-        if (pin == PIN_TMP) {
-            val = (val * 3800) >> 12;
-        } else {
-            val = (val * AREF_MV) >> 12;
-        }
+    if (!ratio) {        
+        val = (val * AREF_MV) >> 12;
     }
     
     if (avg == -1) {
@@ -111,13 +107,12 @@ static uint8_t bitmapBat(int8_t vBatx10) {
 }
 
 /**
- * Formats the given battery voltage in mV and returns it.
- * @param mVBat
+ * Formats the given battery voltage in V multiplied by 10 and returns it.
+ * @param vBatx10
  * @return string
  */
-static char * formatBat(int16_t mVBat) {
-    uint8_t vx10 = divRoundNearest(mVBat, 100);
-    div_t v = div(vx10, 10);
+static char * formatBat(int16_t vBatx10) {
+    div_t v = div(vBatx10, 10);
     static char buf[7];
     snprintf(buf, sizeof (buf), "%d.%dV", v.quot, v.rem);
     
@@ -125,27 +120,28 @@ static char * formatBat(int16_t mVBat) {
 }
 
 void measureValues(void) {
-    mVAvgTmp = convert(AREF_AVCC, PIN_TMP, false, mVAvgTmp);
-    ratioAvgRh = convert(AREF_AVCC, PIN_RH, true, ratioAvgRh);
+    avgADCTmp = convert(AREF_AVCC, PIN_TMP, true, avgADCTmp);
+    avgADCRh = convert(AREF_AVCC, PIN_RH, true, avgADCRh);
     // give the capacitor between AREF and GND some time to discharge
     _delay_us(150);
     mvAvgBat = convert(AREF_INT, PIN_BAT, false, mvAvgBat);
 }
 
-void displayValues(void) {
-    // temperature in °C multiplied by 10
-    int16_t tmpx10 = (mVAvgTmp >> EWMA_BS) - TMP36_MV_0C;
+void displayValues(void) {    
+    // resistance of the thermistor
+    float resTh = (4096.0 / (avgADCTmp >> EWMA_BS) - 1) * TH_SERI;
+    // temperature in °C
+    float tmp = 1.0 / (1.0 / TH_BETA * log(resTh / TH_RESI) + 1.0 / TH_TEMP) - TMP_0C;
+    // somehow I don't like to work with floats
+    int16_t tmpx10 = tmp * 10;
     
     // relative humidity in %
-    int32_t rhADC = (ratioAvgRh >> EWMA_BS);
-    int16_t rh = divRoundNearest((rhADC - RH_ADC_0) * 100, RH_ADC);
-    
+    int32_t rh = divRoundNearest(((avgADCRh >> EWMA_BS) - RH_ADC_0) * 100, RH_ADC);    
     // temperature compensation of relative humidity
-    rh = ((int32_t)rh * 1000000) / (1054600 - tmpx10 * 216UL);
+    rh = divRoundNearest(rh * 1000000, 1054600 - tmpx10 * 216UL);
     
-    // battery voltage in mV (one fifth by voltage divider)
-    int16_t mVBat = (mvAvgBat >> EWMA_BS) * 5;
-    int8_t vBatx10 = divRoundNearest(mVBat, 100);
+    // battery voltage in V x10 (measured one fifth by voltage divider)
+    int8_t vBatx10 = divRoundNearest((mvAvgBat >> EWMA_BS), 20);
     
     if (tmpx10 == prevTmpx10 && rh == prevRh && vBatx10 == prevVBatx10) {
         // skip update of display if no change in measurements
@@ -162,7 +158,7 @@ void displayValues(void) {
     // clear frame
     setFrame(0x00);
     // battery voltage and bitmap
-    writeString(0, 182, unifont, formatBat(mVBat));
+    writeString(0, 182, unifont, formatBat(vBatx10));
     writeBitmap(0, 216, bitmapBat(vBatx10));
     // temperature with label
     writeString(1, 0, dejavu, formatTmp(tmpx10));

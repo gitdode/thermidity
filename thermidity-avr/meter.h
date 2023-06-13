@@ -15,10 +15,18 @@
 
 #define AREF_MV     1100 // 1136
 
+/** The display wants at least 3V */
 #define BAT_LOW     3000
 
-/** Output of the TMP36 is 750 mV @ 25°C, 10 mV per °C */
-#define TMP36_MV_0C 500
+/** 0 Kelvin */
+#define TMP_0C      273.15
+
+/** Specifications of the NTC Thermistor 0.1°C */
+#define TH_RESI     100000
+#define TH_TEMP     298.15
+#define TH_BETA     3892
+/** Serial resistance */
+#define TH_SERI     100000
 
 /** Ratiometric response of the HIH-5030 at 0%RH and 100%RH with 12-bit ADC */
 #define RH_ADC_0    620  // Vout = Vsupply * 0.1515
