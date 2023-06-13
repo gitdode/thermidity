@@ -1659,7 +1659,7 @@
     (property "Value" "NTC 100k" (id 1) (at 189.23 40.9574 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical" (id 2) (at 186.69 38.1 0)
+    (property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder" (id 2) (at 186.69 38.1 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 186.69 38.1 0)
@@ -1995,7 +1995,7 @@
       (reference "R4") (unit 1) (value "65k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
     (path "/982b487a-58ee-40be-91ad-fe1876106c60"
-      (reference "TH1") (unit 1) (value "NTC 100k") (footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P2.54mm_Vertical")
+      (reference "TH1") (unit 1) (value "NTC 100k") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
     )
     (path "/a564f624-0149-43d3-9b25-20abc178b1e7"
       (reference "U1") (unit 1) (value "ATmega328P") (footprint "Package_QFP:TQFP-32_7x7mm_P0.8mm")
