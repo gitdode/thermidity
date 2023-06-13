@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/sleep.h>
+#include <util/delay.h>
 
 #include "meter.h"
 #include "pins.h"
@@ -37,7 +38,7 @@ static uint32_t convert(uint8_t aref, uint8_t pin, bool ratio, uint32_t avg) {
     ADMUX = 0x00 | aref | pin;
     set_sleep_mode(SLEEP_MODE_ADC);
 
-    uint32_t over = 0;
+    uint16_t over = 0;
     for (uint8_t i = 0; i < 17; i++) {
         ADCSRA |= (1 << ADSC);
         sleep_mode();
@@ -126,6 +127,8 @@ static char * formatBat(int16_t mVBat) {
 void measureValues(void) {
     mVAvgTmp = convert(AREF_AVCC, PIN_TMP, false, mVAvgTmp);
     ratioAvgRh = convert(AREF_AVCC, PIN_RH, true, ratioAvgRh);
+    // give the capacitor between AREF and GND some time to discharge
+    _delay_us(150);
     mvAvgBat = convert(AREF_INT, PIN_BAT, false, mvAvgBat);
 }
 
