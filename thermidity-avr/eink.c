@@ -172,7 +172,7 @@ void updateDisplay(void) {
     displaySel();
     transmit(DISPLAY_UPDATE_CONTROL2);
     displayData();
-    transmit(0xf4); // not in datasheet table? 0xff (POR) does nothing.
+    transmit(0xf4); // 0xf4, 0xf5, 0xf6, 0xf7 seem to do the same
     displayDes();
     
     displayCmd();

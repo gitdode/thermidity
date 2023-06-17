@@ -78,6 +78,18 @@ static void initPins(void) {
 
     // set display BUSY pin as input pin (default)
     DDR_DISP &= ~(1 << PIN_BUSY);
+    
+    // pull all unused pins high/set to defined level to reduce current
+    // consumption when not in sleep mode
+    PORTB |= (1 << PB6);
+    PORTB |= (1 << PB7);
+    PORTC |= (1 << PC4);
+    PORTC |= (1 << PC5);
+    PORTD |= (1 << PD0);
+    PORTD |= (1 << PD1);
+    PORTD |= (1 << PD2);
+    PORTD |= (1 << PD3);
+    PORTD |= (1 << PD4);
 }
 
 /**
