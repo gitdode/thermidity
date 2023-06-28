@@ -54,7 +54,7 @@ static void initPins(void) {
     DDR_SENS |= (1 << PIN_PWR);
     // drive sensor power pin low
     PORT_SENS &= ~(1 << PIN_PWR);
-    
+
     // set MOSI and SCK as output pin
     DDR_SPI |= (1 << PIN_MOSI);
     DDR_SPI |= (1 << PIN_SCK);
@@ -78,7 +78,7 @@ static void initPins(void) {
 
     // set display BUSY pin as input pin (default)
     DDR_DISP &= ~(1 << PIN_BUSY);
-    
+
     // pull all unused pins high/set to defined level to reduce current
     // consumption when not in sleep mode
     PORTB |= (1 << PB6);
@@ -182,14 +182,14 @@ int main(void) {
 
     // enable global interrupts
     sei();
-    
+
     uint16_t secsCopy;
     while (true) {
         ATOMIC_BLOCK(ATOMIC_FORCEON) {
             secsCopy = secs;
         }
-        
-        if (secsCopy % MEASURE_SECS == 0) {            
+
+        if (secsCopy % MEASURE_SECS == 0) {
             powerOnSensors();
             // give the humidity sensor time to settle
             _delay_ms(100);
@@ -197,12 +197,12 @@ int main(void) {
             measureValues();
             disableADC();
             powerOffSensors();
-            
+
             if (secsCopy >= DISP_UPD_SECS) {
                 ATOMIC_BLOCK(ATOMIC_FORCEON) {
                     secs = 0;
                 }
-                
+
                 // measured battery voltage is /5 by voltage divider
                 if (getMVBat() < BAT_LOW / 5) {
                     powerDown();
@@ -211,7 +211,7 @@ int main(void) {
                 }
             }
         }
-        
+
         set_sleep_mode(SLEEP_MODE_PWR_DOWN);
         sleep_mode();
     }
