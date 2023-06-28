@@ -162,9 +162,9 @@ static void reducePower(void) {
 }
 
 /**
- * Disables global interrupts and the watchdog to stop measuring and to 
- * update the display when batteries are too weak, to avoid discharging 
- * below cutoff voltage.
+ * Disables global interrupts and the watchdog to stop measuring 
+ * and updating the display when batteries are too weak, to limit 
+ * discharging below cutoff voltage.
  */
 static void powerDown(void) {
     cli();
