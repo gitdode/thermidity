@@ -11,10 +11,14 @@
 #include <stdint.h>
 
 #define BAT_0PCT    0
-#define BAT_25PCT   1
-#define BAT_50PCT   2
-#define BAT_75PCT   3
-#define BAT_100PCT  4
+#define BAT_13PCT   1
+#define BAT_25PCT   2
+#define BAT_38PCT   3
+#define BAT_50PCT   4
+#define BAT_63PCT   5
+#define BAT_75PCT   6
+#define BAT_88PCT   7
+#define BAT_100PCT  8
 
 /**
  * A bitmap with its width and height, and data.

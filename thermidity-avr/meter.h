@@ -30,8 +30,14 @@
 #define RH_ADC_100  3225 // Vout = Vsupply * 0.7875
 #define RH_ADC      RH_ADC_100 - RH_ADC_0
 
+/** Battery cutoff voltage in millivolts */
+#define BAT_LOW     3000
+
 /** Weight of the exponential weighted moving average as bit shift */
 #define EWMA_BS     4
+
+/** Returns the battery voltage in millivolts divided by 5 */
+int16_t getMVBat(void);
 
 /**
  * Measures temperature, relative humidity and battery voltage and updates 

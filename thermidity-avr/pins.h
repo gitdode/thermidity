@@ -10,7 +10,7 @@
 
 #include <avr/io.h>
 
-/* Vref and Sensors */
+/* Sensors */
 #define DDR_SENS  DDRC
 #define PORT_SENS PORTC
 #define PIN_PWR   PC1

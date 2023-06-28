@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <math.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
@@ -18,7 +19,6 @@
 #include "dejavu.h"
 #include "bitmaps.h"
 #include "display.h"
-#include "usart.h"
 #include "utils.h"
 
 static uint32_t avgADCTmp = -1;
@@ -98,11 +98,15 @@ static char * formatRh(int16_t rh) {
  * @param vBatx10
  * @return index
  */
-static uint8_t bitmapBat(int8_t vBatx10) {
-    if (vBatx10 < 32) return BAT_0PCT;
-    if (vBatx10 < 36) return BAT_25PCT;
-    if (vBatx10 < 40) return BAT_50PCT;
-    if (vBatx10 < 44) return BAT_75PCT;
+static uint8_t bitmapBat(int8_t vBatx10) {    
+    if (vBatx10 < 31) return BAT_0PCT;
+    if (vBatx10 < 33) return BAT_13PCT;
+    if (vBatx10 < 35) return BAT_25PCT;
+    if (vBatx10 < 37) return BAT_38PCT;
+    if (vBatx10 < 39) return BAT_50PCT;
+    if (vBatx10 < 41) return BAT_63PCT;
+    if (vBatx10 < 43) return BAT_75PCT;
+    if (vBatx10 < 45) return BAT_88PCT;
     return BAT_100PCT;
 }
 
@@ -117,6 +121,10 @@ static char * formatBat(int16_t vBatx10) {
     snprintf(buf, sizeof (buf), "%d.%dV", v.quot, v.rem);
     
     return buf;
+}
+
+int16_t getMVBat(void) {
+    return (avgMVBat >> EWMA_BS);
 }
 
 void measureValues(void) {
@@ -162,10 +170,10 @@ void displayValues(void) {
     writeBitmap(0, 216, bitmapBat(vBatx10));
     // temperature with label
     writeString(1, 0, dejavu, formatTmp(tmpx10));
-    writeString(5, 152, unifont, "Temperature");
+    writeString(5, 144, unifont, "Temperature");
     // humidity with label
     writeString(8, 0, dejavu, formatRh(rh));
-    writeString(12, 152, unifont, "Humidity");
+    writeString(12, 144, unifont, "Humidity");
     // update display
     doDisplay();
 }
