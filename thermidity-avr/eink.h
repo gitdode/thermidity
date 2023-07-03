@@ -30,14 +30,14 @@
 #define RAM_X_OFFSET    1
 
 /**
- * Send a command to the display.
+ * Send the given command to the display.
  */
-void displayCmd(void);
+void displayCmd(uint8_t cmd);
 
 /**
- * Send data to the display.
+ * Send the given data to the display.
  */
-void displayData(void);
+void displayData(uint8_t data);
 
 /**
  * Resets the display and initializes it.
