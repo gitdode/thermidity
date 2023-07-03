@@ -47,9 +47,11 @@ void measureValues(void);
 
 /**
  * Calculates, formats and displays the averaged temperature, relative humidity 
- * and battery voltage values.
+ * and battery voltage values. Updates the display either in fast or full update
+ * mode.
+ * @return true if display was updated, false otherwise
  */
-void displayValues(void);
+bool displayValues(bool fast);
 
 #endif /* METER_H */
 

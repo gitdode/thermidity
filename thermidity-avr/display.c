@@ -132,9 +132,9 @@ void writeString(uint16_t row, uint16_t col, Font font, char *string) {
     }
 }
 
-void doDisplay(void) {
-    initDisplay();
+void doDisplay(bool fast) {
+    initDisplay(fast);
     resetAddressCounter();
     sramToDisplay();
-    updateDisplay();
+    updateDisplay(fast);
 }

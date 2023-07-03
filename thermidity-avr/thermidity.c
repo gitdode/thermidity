@@ -37,8 +37,12 @@
 #define MEASURE_SECS    32
 /* Display should not be updated more frequently than once every 180 seconds */
 #define DISP_UPD_SECS   288
+/* Number of fast updates until a full update is done to avoid ghosting */
+#define DISP_MAX_FAST   9
 
 static volatile uint16_t secs = DISP_UPD_SECS - 1;
+
+static uint8_t updates = DISP_MAX_FAST + 1;
 
 ISR(WDT_vect) {
     secs++;
@@ -207,7 +211,16 @@ int main(void) {
                 if (getMVBat() < BAT_LOW / 5) {
                     powerDown();
                 } else {
-                    displayValues();
+                    if (updates > DISP_MAX_FAST) {
+                        // make a full update after a certain number of fast 
+                        // updates to avoid ghosting
+                        displayValues(false);
+                        updates = 0;
+                    } else {
+                        if (displayValues(true)) {
+                            updates++;
+                        }
+                    }
                 }
             }
         }

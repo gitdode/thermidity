@@ -53,9 +53,9 @@ uint8_t writeChar(uint16_t row, uint16_t col, Font font, uint16_t code);
 void writeString(uint16_t row, uint16_t col, Font font, char *string);
 
 /**
- * Initializes the display, resets the address counter,
- * copys image data from SRAM to display and updates it.
+ * Initializes the display, resets the address counter, copys image data from 
+ * SRAM to display and updates it, either in fast or full update mode.
  */
-void doDisplay(void);
+void doDisplay(bool fast);
 
 #endif /* DISPLAY_H */

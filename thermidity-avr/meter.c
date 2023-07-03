@@ -135,7 +135,7 @@ void measureValues(void) {
     avgMVBat = convert(AREF_INT, PIN_BAT, false, avgMVBat);
 }
 
-void displayValues(void) {    
+bool displayValues(bool fast) {    
     // resistance of the thermistor
     float resTh = (4096.0 / fmax(1, (avgADCTmp >> EWMA_BS)) - 1) * TH_SERI;
     // temperature in °C
@@ -153,7 +153,7 @@ void displayValues(void) {
     
     if (tmpx10 == prevTmpx10 && rh == prevRh && vBatx10 == prevVBatx10) {
         // skip update of display if no change in measurements
-        return;
+        return false;
     }
     
     prevTmpx10 = tmpx10;
@@ -175,5 +175,7 @@ void displayValues(void) {
     writeString(8, 0, dejavu, formatRh(rh));
     writeString(12, 144, unifont, "Humidity");
     // update display
-    doDisplay();
+    doDisplay(fast);
+    
+    return true;
 }
