@@ -33,12 +33,22 @@
 #define RAM_X_OFFSET    1
 
 /**
- * Send the given command to the display.
+ * Sets display to send a command.
+ */
+void displaySetCmd(void);
+
+/**
+ * Sets display to send data.
+ */
+void displaySetData(void);
+
+/**
+ * Sends the given command to the display.
  */
 void displayCmd(uint8_t cmd);
 
 /**
- * Send the given data to the display.
+ * Sends the given data to the display.
  */
 void displayData(uint8_t data);
 

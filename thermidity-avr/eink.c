@@ -32,13 +32,21 @@ static void waitBusy(void) {
     loop_until_bit_is_clear(PINP_DISP, PIN_BUSY);
 }
 
-void displayCmd(uint8_t cmd) {
+void displaySetCmd(void) {
     PORT_DSPI &= ~(1 << PIN_DC);
+}
+
+void displaySetData(void) {
+    PORT_DSPI |= (1 << PIN_DC);
+}
+
+void displayCmd(uint8_t cmd) {
+    displaySetCmd();
     transmit(cmd);
 }
 
 void displayData(uint8_t data) {
-    PORT_DSPI |= (1 << PIN_DC);
+    displaySetData();
     transmit(data);
 }
 
@@ -155,7 +163,6 @@ void updateDisplay(bool fast) {
     
     // - Set softstart setting by Command 0x0C
     /*
-    displaySel();
     displayCmd(BOOSTER_SOFT_START_CONTROL);
     displayData(0x8b); // A[7:0] -> Soft start setting for Phase1 = 8Bh [POR]
     displayData(0x9c); // B[7:0] -> Soft start setting for Phase2 = 9Ch [POR]

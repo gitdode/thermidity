@@ -11,6 +11,7 @@
 #include "unifont.h"
 #include "dejavu.h"
 #include "bitmaps.h"
+#include "spi.h"
 #include "sram.h"
 #include "eink.h"
 #include "utils.h"
@@ -82,15 +83,25 @@ static void bufferBitmap(uint8_t row, uint16_t col, const uint8_t *bitmap,
     }
 }
 
-// TODO write to display while reading from SRAM in sequential mode
 void sramToDisplay(void) {
     uint16_t bytes = DISPLAY_WIDTH * DISPLAY_H_BYTES;
-
+    
+    sramWriteStatus(SRAM_SEQU);
+    sramSel();
+    sramInitRead(0x0);
+    
+    displaySel();
+    displaySetCmd();
+    uint8_t byte = transmit(WRITE_RAM_BW);
+    displaySetData();
     for (uint16_t i = 0; i < bytes; i++) {
-        uint8_t byte = sramRead(i);
         // remove negation for dark mode :)
-        imageWrite(~byte);
+        byte = transmit(~byte);
     }
+    displayDes();
+    
+    sramWriteStatus(SRAM_BYTE);
+    sramDes();
 }
 
 void setFrame(uint8_t byte) {

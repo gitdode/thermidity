@@ -13,8 +13,9 @@
 #define SRAM_RDSR   0x5
 #define SRAM_WRSR   0x1
 
-#define MODE_SEQU   6
-#define MODE_PAGE   7
+#define SRAM_BYTE   0x01
+#define SRAM_SEQU   0x41
+#define SRAM_PAGE   0x81
 
 #define SRAM_HIGH   0x1fff
 
@@ -60,9 +61,16 @@ void sramWriteStatus(uint8_t status);
 
 /**
  * Reads the status and returns it.
- * @return 
+ * @return status
  */
 uint8_t sramReadStatus(void);
+
+/**
+ * Sends read command and sets the given address.
+ * Useful for reading in sequential or page mode.
+ * @param address
+ */
+void sramInitRead(uint16_t address);
 
 #endif /* SRAM_H */
 
