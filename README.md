@@ -38,9 +38,9 @@ A precision thermistor and precision low-voltage humidity sensor are used:
 
 ## Power Consumption
 
-Estimated average power consumption is about 110µA when measuring every 32 
+Estimated average power consumption is about 90µA when measuring every 32 
 seconds and updating the display once in about 5 minutes, hopefully giving an
-operating time of about 12 months with 3 AAA batteries (1100 mAh, 6% 
+operating time of at least 12 months with 3 AAA batteries (1100 mAh, 6% 
 self-discharge). 
 
 The consumption of each component at 3.8V and 22°C is about:
@@ -82,7 +82,15 @@ lifetime and to save more power.
 
 Below the cutoff voltage of 3.0V, the watchdog is disabled to stop measuring and
 updating the display, to at least delay total discharge of the batteries.
-Consumption of the MCU then is at about 1µA and 24µA of the display.
+Consumption of the MCU then is at about 1µA and 19µA of the display.
 
 The clock of unused modules TWI, all three timers and USART is switched off to 
 reduce power consumption.
+
+Disabling the ADC between measurements and the SPI between display updates both 
+contributes to a significant reduction of power consumption. With an active SPI, 
+consumption of the display including its peripheral is extremely unstable and 
+varies between some tens of microamps and several milliamps. When driving the 
+enable pin of the display low, consumption is stable at about 60µA. When not 
+driving the enable pin low and disabling SPI (driving SCK pin low) consumption 
+is at about 14µA.

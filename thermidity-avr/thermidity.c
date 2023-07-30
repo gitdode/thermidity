@@ -102,7 +102,6 @@ static void initPins(void) {
 static void initSPI(void) {
     SPCR |= (1 << SPR0);
     SPCR |= (1 << MSTR);
-    SPCR |= (1 << SPE);
 }
 
 /**
@@ -155,6 +154,21 @@ static void enableADC(void) {
  */
 static void disableADC(void) {
     ADCSRA &= ~(1 << ADEN);
+}
+
+/**
+ * Enables SPI.
+ */
+static void enableSPI(void) {
+    SPCR |= (1 << SPE);
+}
+
+/**
+ * Disables SPI.
+ */
+static void disableSPI(void) {
+    SPCR &= ~(1 << SPE);
+    PORT_SPI &= ~(1 << PIN_SCK);
 }
 
 /**
@@ -211,6 +225,7 @@ int main(void) {
                 if (getMVBat() < BAT_LOW / 5) {
                     powerDown();
                 } else {
+                    enableSPI();
                     if (updates > DISP_MAX_FAST) {
                         // make a full update after a certain number of fast 
                         // updates to avoid ghosting
@@ -221,6 +236,7 @@ int main(void) {
                             updates++;
                         }
                     }
+                    disableSPI();
                 }
             }
         }
