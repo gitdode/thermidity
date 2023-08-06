@@ -27,6 +27,8 @@ CFLAGS += -Wall -Wstrict-prototypes
 CFLAGS += -g -ggdb
 CFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
 CFLAGS += -std=gnu99
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105523
+CFLAGS += --param=min-pagesize=0
 
 TARGET = $(strip $(basename $(MAIN)))
 SRC += $(TARGET).c
@@ -50,7 +52,7 @@ eeprom: $(TARGET).eeprom
 	$(OBJDUMP) -S $< > $@
  
 size:  $(TARGET).elf
-	$(AVRSIZE) -C --mcu=$(MCU) $(TARGET).elf
+	$(AVRSIZE) -G $(TARGET).elf
 
 clean:
 	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \
