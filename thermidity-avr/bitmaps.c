@@ -121,9 +121,9 @@ const Bitmap bitmaps[] PROGMEM = {
     {32, 16, BAT_100PCT_DATA}
 };
 
-Bitmap getBitmap(uint8_t index) {
+Bitmap *getBitmap(uint8_t index) {
     static Bitmap bitmap;
     memcpy_P(&bitmap, &bitmaps[index], sizeof (Bitmap));
 
-    return bitmap;
+    return &bitmap;
 }

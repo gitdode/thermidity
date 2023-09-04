@@ -33,11 +33,11 @@ typedef struct {
 } Bitmap;
 
 /**
- * Returns the bitmap at the given index.
+ * Returns a pointer to the bitmap at the given index.
  * @param index
  * @return Bitmap
  */
-Bitmap getBitmap(uint8_t index);
+Bitmap *getBitmap(uint8_t index);
 
 #endif /* BITMAPS_H */
 
