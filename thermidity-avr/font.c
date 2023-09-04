@@ -9,7 +9,7 @@
 #include <avr/pgmspace.h>
 #include "font.h"
 
-Glyph getGlyph(Font *font, uint16_t code) {
+Glyph *getGlyph(Font *font, uint16_t code) {
     
     // https://en.wikipedia.org/wiki/Binary_search_algorithm
     int16_t l = 0;
@@ -27,7 +27,7 @@ Glyph getGlyph(Font *font, uint16_t code) {
             static Glyph glyph;
             memcpy_P(&glyph, &font->glyphs[m], sizeof (Glyph));
             
-            return glyph;
+            return &glyph;
         }
     }
     

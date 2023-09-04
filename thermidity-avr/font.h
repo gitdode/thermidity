@@ -34,13 +34,13 @@ typedef struct {
 } Font;
 
 /**
- * Returns the glyph at the given pseudo UTF-8 code point, i.e. 0x00f6 
- * for U+00F6 from the given font.
+ * Returns a pointer to the glyph at the given pseudo UTF-8 code point, 
+ * i.e. 0x00f6 for U+00F6 from the given font.
  * If there is no glyph for that code point, a question mark is returned.
  * @param font
  * @param code
  * @return Glyph
  */
-Glyph getGlyph(Font *font, uint16_t code);
+Glyph *getGlyph(Font *font, uint16_t code);
 
 #endif /* FONT_H */
