@@ -971,8 +971,8 @@ static const Glyph glyphs[] PROGMEM = {
     {0x00ff, WIDTH, y_diaeresis}
 };
 
-const Font getUnifont(void) {
-    const Font unifont = {glyphs, ARRAY_LENGTH(glyphs), HEIGHT};
+Font *getUnifont(void) {
+    static Font unifont = {glyphs, ARRAY_LENGTH(glyphs), HEIGHT};
     
-    return unifont;
+    return &unifont;
 }

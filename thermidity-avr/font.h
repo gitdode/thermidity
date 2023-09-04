@@ -41,6 +41,6 @@ typedef struct {
  * @param code
  * @return Glyph
  */
-Glyph getGlyph(Font font, uint16_t code);
+Glyph getGlyph(Font *font, uint16_t code);
 
 #endif /* FONT_H */

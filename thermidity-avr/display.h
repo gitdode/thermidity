@@ -41,7 +41,7 @@ uint8_t writeBitmap(uint16_t row, uint16_t col, uint16_t index);
  * @param code
  * @return glyph width
  */
-uint8_t writeChar(uint16_t row, uint16_t col, Font font, uint16_t code);
+uint8_t writeChar(uint16_t row, uint16_t col, Font *font, uint16_t code);
 
 /**
  * Writes the given string with the given font to the given row and column.
@@ -50,7 +50,7 @@ uint8_t writeChar(uint16_t row, uint16_t col, Font font, uint16_t code);
  * @param font
  * @param string
  */
-void writeString(uint16_t row, uint16_t col, Font font, char *string);
+void writeString(uint16_t row, uint16_t col, Font *font, char *string);
 
 /**
  * Initializes the display, resets the address counter, copys image data from 

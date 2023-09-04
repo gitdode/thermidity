@@ -17,7 +17,7 @@
  * Returns an instance of the Unifont font.
  * @return unifont
  */
-const Font getUnifont(void);
+Font *getUnifont(void);
 
 #endif /* UNIFONT_H */
 

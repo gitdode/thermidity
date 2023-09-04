@@ -794,8 +794,8 @@ const Glyph glyphs[] PROGMEM = {
     {0x00b0, 16, DEGREE_SIGN}
 };
 
-const Font getDejaVu(void) {
-    const Font dejaVu = {glyphs, ARRAY_LENGTH(glyphs), HEIGHT};
+Font *getDejaVu(void) {
+    static Font dejaVu = {glyphs, ARRAY_LENGTH(glyphs), HEIGHT};
     
-    return dejaVu;
+    return &dejaVu;
 }

@@ -15,7 +15,7 @@
  * Returns an instance of the font derived from DejaVu.
  * @return unifont
  */
-const Font getDejaVu(void);
+Font *getDejaVu(void);
 
 #endif /* DEJAVU_H */
 
