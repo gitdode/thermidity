@@ -12,7 +12,7 @@
 #include "font.h"
 
 /**
- * Returns an instance of the font derived from DejaVu.
+ * Returns a pointer to an instance of the font derived from DejaVu.
  * @return unifont
  */
 Font *getDejaVu(void);

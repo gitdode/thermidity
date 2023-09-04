@@ -14,7 +14,7 @@
 #define UNIFONT_DEMO_SIZE 7
 
 /**
- * Returns an instance of the Unifont font.
+ * Returns a pointer to an instance of the Unifont font.
  * @return unifont
  */
 Font *getUnifont(void);
