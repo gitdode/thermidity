@@ -7,7 +7,6 @@
  */
 
 #include <stdio.h>
-#include <avr/pgmspace.h>
 #include "font.h"
 #include "dejavu.h"
 #include "utils.h"

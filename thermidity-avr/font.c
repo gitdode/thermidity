@@ -22,7 +22,7 @@ const __flash Glyph* getGlyphAddress(const __flash Font *font, uint16_t code) {
         } else if (pglyph->code > code) {
             r = m - 1;
         } else {
-            // found code point, get and return address of glyph
+            // found code point, return address of glyph
             return pglyph;
         }
     }
