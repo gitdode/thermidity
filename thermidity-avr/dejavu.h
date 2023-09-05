@@ -12,12 +12,9 @@
 #include "font.h"
 
 /**
- * Returns an instance of the font derived from DejaVu.
- * @return unifont
+ * DejaVu font.
  */
-const Font getDejaVu(void);
-
-extern const __flash Font theDejaVu;
+extern const __flash Font dejaVuFont;
 
 #endif /* DEJAVU_H */
 

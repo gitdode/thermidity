@@ -48,9 +48,9 @@ static void bufferByte(uint16_t index, uint16_t *address, uint16_t height,
  * @param width
  * @param height
  */
-static void bufferBitmap (uint8_t row, uint16_t col,
-                          const __flash  uint8_t *bitmap,
-                          uint16_t width, uint16_t height) {
+static void bufferBitmap(uint8_t row, uint16_t col,
+                         const __flash  uint8_t *bitmap,
+                         uint16_t width, uint16_t height) {
     uint16_t size = width * height / 8;
     uint16_t origin = DISPLAY_WIDTH * DISPLAY_H_BYTES + row - col * DISPLAY_H_BYTES;
 
@@ -115,16 +115,15 @@ void setFrame(uint8_t byte) {
 }
 
 uint8_t writeBitmap(uint16_t row, uint16_t col, uint16_t index) {
-    const __flash Bitmap *bitmap = & AllBitmaps[index];
+    const __flash Bitmap *bitmap = & bitmaps[index];
     bufferBitmap (row, col, bitmap->bitmap, bitmap->width, bitmap->height);
     
     return bitmap->width;
 }
 
-uint8_t writeGlyph(uint16_t row, uint16_t col, const __flash Font *font, uint16_t code)
-{
-    const __flash Glyph *glyph = getGlyphAddress (font, code);
-    bufferBitmap (row, col, glyph->bitmap, glyph->width, font->height);
+uint8_t writeGlyph(uint16_t row, uint16_t col, const __flash Font *font, uint16_t code) {
+    const __flash Glyph *glyph = getGlyphAddress(font, code);
+    bufferBitmap(row, col, glyph->bitmap, glyph->width, font->height);
     
     return glyph->width;
 }

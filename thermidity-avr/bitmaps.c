@@ -108,7 +108,7 @@ const __flash uint8_t BAT_100PCT_DATA[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-const __flash Bitmap AllBitmaps[] = {
+const __flash Bitmap bitmaps[] = {
     {32, 16, BAT_0PCT_DATA},
     {32, 16, BAT_13PCT_DATA},
     {32, 16, BAT_25PCT_DATA},
@@ -119,7 +119,3 @@ const __flash Bitmap AllBitmaps[] = {
     {32, 16, BAT_88PCT_DATA},
     {32, 16, BAT_100PCT_DATA}
 };
-
-/*const __flash Bitmap* getBitmapAddress (uint8_t index) {
-    return & AllBitmaps[index];
-    }*/

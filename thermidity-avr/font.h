@@ -41,6 +41,6 @@ typedef struct {
  * @param code
  * @return Glyph
  */
-const __flash Glyph* getGlyphAddress (const __flash Font *font, uint16_t code);
+const __flash Glyph* getGlyphAddress(const __flash Font *font, uint16_t code);
 
 #endif /* FONT_H */

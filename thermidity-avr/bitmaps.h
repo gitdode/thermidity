@@ -33,12 +33,9 @@ typedef struct {
 } Bitmap;
 
 /**
- * Returns the flash adress bitmap at the given index.
- * @param index
- * @return Bitmap
+ * Available bitmaps.
  */
-
-extern const __flash Bitmap AllBitmaps[];
+extern const __flash Bitmap bitmaps[];
 
 #endif /* BITMAPS_H */
 

@@ -47,6 +47,7 @@
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath>/home/dode/dev/thermidity/thermidity-avr/thermidity.elf</executablePath>
           <cTool>
+            <standard>3</standard>
             <incDir>
               <pElem>.</pElem>
             </incDir>

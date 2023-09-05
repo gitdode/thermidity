@@ -14,12 +14,9 @@
 #define UNIFONT_DEMO_SIZE 7
 
 /**
- * Returns an instance of the Unifont font.
- * @return unifont
+ * Unifont font.
  */
-const Font getUnifont(void);
-
-extern const __flash Font theUnifont;
+extern const __flash Font unifontFont;
 
 #endif /* UNIFONT_H */
 
