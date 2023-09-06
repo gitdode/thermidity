@@ -45,6 +45,18 @@ all: $(TARGET).hex
 %.elf: $(SRC)
 	$(CC) $(CFLAGS) $(SRC) --output $@ 
 
+# Auto-generated lookup tables.
+
+$(TARGET).elf: unifont-lookup.h dejavu-lookup.h
+
+unifont-lookup.h: unifont.c gen-lookup.py Makefile
+	./gen-lookup.py $< "Glyph glyphs[]" "};" QUESTION_MARK  \
+		"static const __flash uint8_t lookup_unifont[256]" > $@
+
+dejavu-lookup.h: dejavu.c gen-lookup.py Makefile
+	./gen-lookup.py $< "Glyph glyphs[]" "};" QUESTION_MARK  \
+		"static const __flash uint8_t lookup_dejavu[256]" > $@
+
 disasm: $(TARGET).lst
 
 eeprom: $(TARGET).eeprom
@@ -59,7 +71,8 @@ clean:
 	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \
 	$(TARGET).o $(TARGET).d $(TARGET).eep $(TARGET).lst \
 	$(TARGET).lss $(TARGET).sym $(TARGET).map $(TARGET)~ \
-	$(TARGET).eeprom
+	$(TARGET).eeprom \
+	unifont-lookup.h dejavu-lookup.h
 
 flash: $(TARGET).hex 
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$<

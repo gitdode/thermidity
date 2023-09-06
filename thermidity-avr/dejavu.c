@@ -793,4 +793,6 @@ const __flash Glyph glyphs[] = {
     {0x00b0, 16, DEGREE_SIGN}
 };
 
-const __flash Font dejaVuFont = {glyphs, ARRAY_LENGTH(glyphs), HEIGHT};
+#include "dejavu-lookup.h"
+
+const __flash Font dejaVuFont = {glyphs, ARRAY_LENGTH(glyphs), HEIGHT, lookup_dejavu};

@@ -33,6 +33,10 @@ typedef struct {
     const length_t length;
     /** Height of (the glyphs of) this font. */
     const height_t height;
+    /** A lookup table of 256 bytes that maps Glyph.code to the position
+     *  of the glyph in @glyphs.  If no lookuptable is available or wanted,
+     *  set to NULL.  */
+    const __flash code_t *code_to_id;
 } Font;
 
 /**
