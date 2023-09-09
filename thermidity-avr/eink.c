@@ -52,10 +52,10 @@ void displayData(uint8_t data) {
 
 void initDisplay(bool fast) {
     // 1. Power On
-    // VCI already supplied - could supply by MCU output pin?
     // - Supply VCI
     // - Wait 10ms
-    _delay_ms(10);
+    // VCI already supplied, no need to wait
+    // _delay_ms(10);
     
     displaySel();
 
@@ -65,7 +65,7 @@ void initDisplay(bool fast) {
 
     // - HW Reset
     hwReset();
-    _delay_ms(100);
+    // _delay_ms(100);
     waitBusy();
 
     // - SW Reset by Command 0x12
