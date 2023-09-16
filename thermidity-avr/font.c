@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "font.h"
 
-const __flash Glyph* getGlyphAddress(const __flash Font *font, uint16_t code) {
+const __flash Glyph* getGlyphAddress(const __flash Font *font, code_t code) {
     
     // https://en.wikipedia.org/wiki/Binary_search_algorithm
     int16_t l = 0;
