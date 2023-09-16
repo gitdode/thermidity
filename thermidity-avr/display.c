@@ -77,17 +77,10 @@ static void bufferBitmap(uint8_t row, uint16_t col,
         }
 
         // rotate 8 x 8 pixel
-        // uint16_t m = i / 8 * 8;
-        // We have i - m = i - i/8 * 8 = i & 7, and this mask
-        // does not depend on r and can be computed before the loop.
-        uint8_t mask = 1u << (7 - (i & 7));
-        // No need to loop if `next' is empty.
-        for (uint8_t r = 0; next; r++) {
-            // `next' may be consumed and is not used after this loop.
-            if (next & (1u << 7)) {
-                rotated[r] |= mask;
-            }
-            next <<= 1;
+        uint16_t m = i / 8 * 8;
+        for (uint8_t r = 0; r < 8; r++) {
+            uint8_t bit = (next & (1 << (7 - r))) ? 1 : 0;
+            rotated[r] |= bit << (7 - i + m);
         }
 
         // buffer 8 x 8 rotated pixel
