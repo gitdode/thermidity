@@ -200,6 +200,9 @@ int main(void) {
 
     // enable global interrupts
     sei();
+    
+    // delay initial display update after power on
+    _delay_ms(1000);
 
     while (true) {
         if (ints % MEASURE_INTS == 0) {
