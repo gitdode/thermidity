@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include "display.h"
 #include "unifont.h"
 #include "dejavu.h"
 #include "bitmaps.h"
@@ -25,7 +27,7 @@
  * @param byte
  */
 static void bufferByte(uint16_t index, uint16_t index_mod_height, 
-                       uint16_t *address, uint16_t height, uint8_t byte) {
+                       uint16_t *address, height_t height, uint8_t byte) {
     // if (index % height == 0) {
     if (index_mod_height == 0) {
         if (index > 0) {
@@ -49,9 +51,9 @@ static void bufferByte(uint16_t index, uint16_t index_mod_height,
  * @param width
  * @param height
  */
-static void bufferBitmap(uint8_t row, uint16_t col,
+static void bufferBitmap(row_t row, col_t col,
                          const __flash uint8_t *bitmap,
-                         uint16_t width, uint16_t height) {
+                         width_t width, height_t height) {
     uint16_t size = width * height / 8;
     uint16_t origin = DISPLAY_WIDTH * DISPLAY_H_BYTES + row - col * DISPLAY_H_BYTES;
 
@@ -128,21 +130,21 @@ void setFrame(uint8_t byte) {
     }
 }
 
-uint8_t writeBitmap(uint16_t row, uint16_t col, uint16_t index) {
+width_t writeBitmap(row_t row, col_t col, uint16_t index) {
     const __flash Bitmap *bitmap = &bitmaps[index];
     bufferBitmap (row, col, bitmap->bitmap, bitmap->width, bitmap->height);
     
     return bitmap->width;
 }
 
-uint8_t writeGlyph(uint16_t row, uint16_t col, const __flash Font *font, code_t code) {
+width_t writeGlyph(row_t row, col_t col, const __flash Font *font, code_t code) {
     const __flash Glyph *glyph = getGlyphAddress(font, code);
     bufferBitmap(row, col, glyph->bitmap, glyph->width, font->height);
     
     return glyph->width;
 }
 
-void writeString(uint16_t row, uint16_t col, const __flash Font *font, char *string) {
+void writeString(row_t row, col_t col, const __flash Font *font, char *string) {
     uint8_t offset = 0;
     for (; *string != '\0'; string++) {
         uint8_t c = (uint8_t) *string;

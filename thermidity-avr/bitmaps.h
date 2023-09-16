@@ -20,14 +20,17 @@
 #define BAT_88PCT   7
 #define BAT_100PCT  8
 
+typedef uint8_t width_t;
+typedef uint8_t height_t;
+
 /**
  * A bitmap with its width and height, and data.
  */
 typedef struct {
     /** Width of the bitmap, must be a multiple of 8. */
-    const uint16_t width;
+    const width_t width;
     /** Height of the bitmap, must be a multiple of 8. */
-    const uint16_t height;
+    const height_t height;
     /** The actual bitmap. */
     const __flash uint8_t *bitmap;
 } Bitmap;
