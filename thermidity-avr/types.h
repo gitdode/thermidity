@@ -1,6 +1,6 @@
 /* 
  * File:   types.h
- * Author: dode
+ * Author: torsten.roemer@luniks.net
  *
  * Created on 17. September 2023, 20:33
  */
