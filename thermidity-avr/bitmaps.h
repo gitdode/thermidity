@@ -9,6 +9,7 @@
 #define BITMAPS_H
 
 #include <stdint.h>
+#include "types.h"
 
 #define BAT_0PCT    0
 #define BAT_13PCT   1
@@ -19,9 +20,6 @@
 #define BAT_75PCT   6
 #define BAT_88PCT   7
 #define BAT_100PCT  8
-
-typedef uint8_t width_t;
-typedef uint8_t height_t;
 
 /**
  * A bitmap with its width and height, and data.

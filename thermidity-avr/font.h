@@ -8,7 +8,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-typedef uint8_t code_t;
+#include "types.h"
 
 /**
  * A glyph with its pseudo UTF-8 code point, width and bitmap.
@@ -17,7 +17,7 @@ typedef struct {
     /** Pseudo UTF-8 code point of the glyph. */
     const code_t code;
     /** Width of the glyph. */
-    const uint8_t width;
+    const width_t width;
     /** Bitmap of the glyph. */
     const __flash uint8_t *bitmap;
 } Glyph;
@@ -32,7 +32,7 @@ typedef struct {
     /** Number of glyphs of this font. */
     const uint8_t length;
     /** Height of (the glyphs of) this font. */
-    const uint8_t height;
+    const height_t height;
 } Font;
 
 /**

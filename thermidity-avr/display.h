@@ -8,11 +8,9 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#include "types.h"
 #include "bitmaps.h"
 #include "font.h"
-
-typedef uint8_t row_t;
-typedef uint8_t col_t;
 
 /**
  * Copies image data from SRAM to display.

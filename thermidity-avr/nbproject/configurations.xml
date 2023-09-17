@@ -11,6 +11,7 @@
       <in>spi.c</in>
       <in>sram.c</in>
       <in>thermidity.c</in>
+      <in>types.h</in>
       <in>unifont.c</in>
       <in>usart.c</in>
       <in>utils.c</in>
@@ -107,6 +108,8 @@
             ex="false"
             tool="0"
             flavor2="3">
+      </item>
+      <item path="types.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
