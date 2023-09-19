@@ -19,5 +19,8 @@ typedef uint8_t col_t;
 /* Char code (like UTF-8 code point) */
 typedef uint8_t code_t;
 
+/* Number of glyphs of a font */
+typedef uint8_t length_t;
+
 #endif /* TYPES_H */
 

@@ -11,11 +11,11 @@
 const __flash Glyph* getGlyphAddress(const __flash Font *font, code_t code) {
     
     // https://en.wikipedia.org/wiki/Binary_search_algorithm
-    int16_t l = 0;
-    int16_t r = font->length - 1;
+    code_t l = 0;
+    code_t r = font->length - 1;
     
     while (l <= r) {
-        uint8_t m = (l + r) / 2;
+        code_t m = (l + r) / 2;
         const __flash Glyph *pglyph = &font->glyphs[m];
         if (pglyph->code < code) {
             l = m + 1;

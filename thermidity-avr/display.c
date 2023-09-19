@@ -61,7 +61,8 @@ static void bufferBitmap(row_t row, col_t col,
     uint8_t rotated[8];
     memset(rotated, 0, 8);
     uint16_t n = 0, x = 0;
-    uint16_t i_mod_height = 0, i_div_height = 0, x_mod_height = 0;
+    uint16_t i_div_height = 0;
+    height_t i_mod_height = 0, x_mod_height = 0;
     for (uint16_t i = 0; i < size; i++) {
         uint8_t next = bitmap[n];
                 

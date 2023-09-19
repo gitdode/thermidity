@@ -30,7 +30,7 @@ typedef struct {
     /** Glyphs of this font. */
     const __flash Glyph *glyphs;
     /** Number of glyphs of this font. */
-    const uint8_t length;
+    const length_t length;
     /** Height of (the glyphs of) this font. */
     const height_t height;
 } Font;
