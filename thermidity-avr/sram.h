@@ -66,6 +66,13 @@ void sramWriteStatus(uint8_t status);
 uint8_t sramReadStatus(void);
 
 /**
+ * Sends write command and sets the given address.
+ * Useful for writing in sequential or page mode.
+ * @param address
+ */
+void sramInitWrite(uint16_t address);
+
+/**
  * Sends read command and sets the given address.
  * Useful for reading in sequential or page mode.
  * @param address

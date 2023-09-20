@@ -118,17 +118,23 @@ void sramToDisplay(void) {
         byte = transmit(~byte);
     }
     displayDes();
-    sramDes();
     
+    sramDes();
     sramWriteStatus(SRAM_BYTE);
 }
 
 void setFrame(uint8_t byte) {
     uint16_t bytes = DISPLAY_WIDTH * DISPLAY_H_BYTES;
-
-    for (int i = 0; i < bytes; i++) {
-        sramWrite(i, byte);
+    
+    sramWriteStatus(SRAM_SEQU);
+    
+    sramSel();
+    sramInitWrite(0x0);
+    for (uint16_t i = 0; i < bytes; i++) {
+        transmit(byte);
     }
+    sramDes();
+    sramWriteStatus(SRAM_BYTE);
 }
 
 width_t writeBitmap(row_t row, col_t col, uint16_t index) {

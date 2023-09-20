@@ -71,6 +71,12 @@ uint8_t sramReadStatus(void) {
     return status;
 }
 
+void sramInitWrite(uint16_t address) {
+    transmit(SRAM_WRITE);
+    transmit(address >> 8);
+    transmit(address);    
+}
+
 void sramInitRead(uint16_t address) {
     transmit(SRAM_READ);
     transmit(address >> 8);
