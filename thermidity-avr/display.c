@@ -151,7 +151,7 @@ width_t writeGlyph(row_t row, col_t col, const __flash Font *font, code_t code) 
     return glyph->width;
 }
 
-void writeString(row_t row, col_t col, const __flash Font *font, char *string) {
+void writeString(row_t row, col_t col, const __flash Font *font, const char *string) {
     uint8_t offset = 0;
     for (; *string != '\0'; string++) {
         uint8_t c = (uint8_t) *string;

@@ -48,7 +48,7 @@ bool isUSARTReceived(void) {
     return usartReceived;
 }
 
-void getUSARTData(char* const data, size_t const size) {
+void getUSARTData(char *data, size_t size) {
     if (size > 0) {
         data[0] = '\0';
         strncat(data, usartData, size - 1);
@@ -57,7 +57,7 @@ void getUSARTData(char* const data, size_t const size) {
     }
 }
 
-void printString(char* const data) {
+void printString(const char *data) {
     uint8_t i = 0;
     char c;
     while ((c = data[i++]) != '\0') {

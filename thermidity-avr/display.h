@@ -52,7 +52,7 @@ width_t writeGlyph(row_t row, col_t col, const __flash Font *font, code_t code);
  * @param font
  * @param string
  */
-void writeString(row_t row, col_t col, const __flash Font *font, char *string);
+void writeString(row_t row, col_t col, const __flash Font *font, const char *string);
 
 /**
  * Initializes the display, resets the address counter, copys image data from 

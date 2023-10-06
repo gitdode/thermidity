@@ -31,12 +31,12 @@ bool isUSARTReceived(void);
  * Appends the data received via USART to the given string with the given
  * length.
  */
-void getUSARTData(char* data, size_t length);
+void getUSARTData(char *data, size_t length);
 
 /**
  * Prints the given string via USART.
  */
-void printString(char* data);
+void printString(const char *data);
 
 /**
  * Prints the given unsigned integer including CR + LF via USART.
