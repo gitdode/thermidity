@@ -19,7 +19,7 @@ following components:
  
 Thanks to https://github.com/sprintersb for helping me to improve the code and making it more efficient!
 
-<img src="https://luniks.net/other/Thermidity/Thermidity-07.jpg"/>
+![Thermidity-07](https://github.com/user-attachments/assets/fe65d9a9-cccb-4379-a946-24e35e33da11)
 
 ## Accuracy
 
